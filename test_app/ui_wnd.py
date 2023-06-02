@@ -181,7 +181,7 @@ class Ui_MainWindow(object):
         self.apply_settings.setFont(font)
         self.apply_settings.setObjectName("apply_settings")
         self.check_connection = QtWidgets.QPushButton(self.tab)
-        self.check_connection.setGeometry(QtCore.QRect(570, 330, 231, 51))
+        self.check_connection.setGeometry(QtCore.QRect(570, 330, 211, 51))
         font = QtGui.QFont()
         font.setPointSize(16)
         self.check_connection.setFont(font)
@@ -232,7 +232,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

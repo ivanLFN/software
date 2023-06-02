@@ -1,5 +1,5 @@
 import serial
-import time
+import random
 
 class ConnectionAruino():
     def __init__(self, main_window) -> None:
@@ -78,13 +78,26 @@ class ConnectionAruino():
 
     def get_data(self):
 
-        self.arduino = serial.Serial(self.com, self.name)
+        # Получение данных от serial arduino
+        # self.arduino = serial.Serial(self.com, self.name)
 
-        self.arduino.write(b'g')
-        time.sleep(0.1)
-        response = self.arduino.readline().decode().strip()
-        self.data.append(tuple(map(int, response.split(','))))
+        # self.arduino.write(b'g')
+        # time.sleep(0.1)
+        # response = self.arduino.readline().decode().strip()
+        # self.data.append(tuple(map(int, response.split(','))))
 
-        return self.data[-1]
+        # return self.data[-1]
+
+        gyro_x = random.uniform(-1.3, -1.6)
+        gyro_y = random.uniform(0.85, 0.95)
+        gyro_z = random.uniform(0.25, 0.3)
+
+        accel_x = random.uniform(0.2, 0.23)
+        accel_y = random.uniform(-0.08, -0.13)
+        accel_z = random.uniform(9.75, 9.85)
+
+        return (gyro_x, gyro_y, gyro_z, accel_x, accel_y, accel_z)
+
+        
         
 

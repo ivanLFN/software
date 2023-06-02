@@ -7,6 +7,7 @@ from matplotlib.figure import Figure
 import numpy as np
 import threading
 import time
+import math
 
 
 def setup_tab_widget(main_window):
@@ -28,6 +29,7 @@ def setup_tab_widget(main_window):
         QPushButton {
             background-color: #f9f9f9;
             border-radius: 10px;
+            border: 1px solid #2d6678;
             font-size: 22px;
             color: #161616;
         }
@@ -41,6 +43,7 @@ def setup_tab_widget(main_window):
         QPushButton {
             background-color: #f9f9f9;
             border-radius: 10px;
+            border: 1px solid #2d6678;
             font-size: 22px;
             color: #161616;
         }
@@ -76,8 +79,6 @@ def setup_tab_widget(main_window):
     ''')    
 
     
-
-
 def add_available_ports(main_window):
     ports = serial.tools.list_ports.comports()
     port_list = [port.device for port in ports]
@@ -88,6 +89,8 @@ def add_available_ports(main_window):
 
 class StudyWidgetTab():
     def __init__(self, main_window):
+
+        self.main_window = main_window
 
         main_window.ui.checkBox_showplot.stateChanged.connect(self.handle_checkBox_stateChanged)
         
@@ -100,7 +103,7 @@ class StudyWidgetTab():
         self.axes[0].set_ylabel('X')
         self.axes[1].set_ylabel('Y')
         self.axes[2].set_ylabel('Z')
-        self.axes[2].set_xlabel('Time')
+        self.axes[2].set_xlabel('Time') 
 
         self.canvas.draw()
 
@@ -113,7 +116,7 @@ class StudyWidgetTab():
         central_widget = QWidget()
         central_layout = QVBoxLayout()
         central_widget.setLayout(central_layout)
-        main_window.ui.widget.setLayout(plot_layout)
+        self.main_window.ui.widget.setLayout(plot_layout)
 
 
     def run_thread(self):
@@ -129,6 +132,8 @@ class StudyWidgetTab():
         z = np.random.randint(0, 100)
 
         # Добавление новых данных в списки
+        x, y, z = self.calculate_rotation_angles()
+
         self.data_x.append(x)
         self.data_y.append(y)
         self.data_z.append(z)
@@ -159,3 +164,24 @@ class StudyWidgetTab():
             # self.timer_turn_off()
             self.flag_stopped = False
 
+
+    def calculate_rotation_angles(self):
+
+        # Получение данных от arduino как tuple
+        data_tuple = self.main_window.connection.get_data()
+
+        # Вычисление углов на основе акселерометра
+        roll_acc = math.atan2(data_tuple[4], data_tuple[5]) * 180 / math.pi
+        pitch_acc = math.atan2(-data_tuple[3], math.sqrt(data_tuple[4] * data_tuple[4] + data_tuple[5] * data_tuple[5])) * 180 / math.pi
+
+        # Вычисление углов на основе гироскопа
+        dt = 1.0  # Интервал времени между обновлениями (в секундах)
+        gyro_x = data_tuple[0] * dt
+        gyro_y = data_tuple[1] * dt
+        gyro_z = data_tuple[2] * dt
+
+        roll = gyro_x + roll_acc
+        pitch = gyro_y + pitch_acc
+        yaw = gyro_z
+
+        return roll, pitch, yaw
