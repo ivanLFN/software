@@ -1,16 +1,22 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import Qt
 import serial.tools.list_ports
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-import numpy as np
 import threading
 import time
 import math
+import matplotlib.style as style
+import numpy as np
+from PyQt5.QtGui import QPalette, QColor
 
 
 def setup_tab_widget(main_window):
+
+
+    
+
 
     pixmap_1 = QPixmap("static/img/pref.png")
     pref_pixmap = QIcon(pixmap_1)
@@ -20,9 +26,106 @@ def setup_tab_widget(main_window):
     pref_pixmap = QIcon(pixmap_2)
     main_window.ui.tabWidget.setTabIcon(1, pref_pixmap)
 
+    pixmap_4 = QPixmap("static/img/console.png")
+    pref_pixmap = QIcon(pixmap_4)
+    main_window.ui.tabWidget.setTabIcon(2, pref_pixmap)
+
 
 
     add_available_ports(main_window)
+
+
+    style_lineedit = """
+            QLineEdit {
+                background-color: #f9f9f9;
+                border-radius: 10px;
+                border: 1px solid #2d6678;
+                color: #161616;
+                padding: 4px;
+            }
+        """
+    
+    main_window.ui.name.setStyleSheet(style_lineedit)
+    main_window.ui.sensor_speed.setStyleSheet(style_lineedit)
+    main_window.ui.x_step.setStyleSheet(style_lineedit)
+    main_window.ui.x_direct.setStyleSheet(style_lineedit)
+    main_window.ui.y_step.setStyleSheet(style_lineedit)
+    main_window.ui.y_direct.setStyleSheet(style_lineedit)
+    main_window.ui.z_step.setStyleSheet(style_lineedit)
+    main_window.ui.z_direct.setStyleSheet(style_lineedit)
+
+
+
+
+
+    main_window.ui.textEdit.setStyleSheet("""
+        QTextEdit {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #2d6678;
+            font-size: 18px;
+            color: #161616;
+            padding: 4px;
+        }
+    """)
+
+    style_combobox = """
+        QComboBox {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #2d6678;
+            color: #161616;
+            padding: 4px;
+        }
+        
+        QComboBox::drop-down {
+            subcontrol-origin: padding;
+            subcontrol-position: top right;
+            
+            border-left-width: 1px;
+            border-left-color: #2d6678;
+            border-left-style: solid;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        
+        QComboBox::down-arrow {
+            image: url(down_arrow.png); /* Замените на путь к изображению стрелки вниз */
+        }
+        
+        QComboBox QAbstractItemView {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #2d6678;
+            color: #161616;
+            selection-background-color: #2d6678;
+            selection-color: #f9f9f9;
+        }
+    """
+
+
+    
+    main_window.ui.mode_combobox.setStyleSheet(style_combobox)
+    main_window.ui.COM.setStyleSheet(style_combobox)
+
+
+
+
+
+    main_window.ui.clear_btn.setStyleSheet("""
+        QPushButton {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #2d6678;
+            font-size: 22px;
+            color: #161616;
+        }
+        
+        QPushButton:hover {
+            background-color: #2d6678;
+        }
+    """)
 
 
     main_window.ui.apply_settings.setStyleSheet("""
@@ -40,6 +143,34 @@ def setup_tab_widget(main_window):
     """)
 
     main_window.ui.check_connection.setStyleSheet("""
+        QPushButton {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #2d6678;
+            font-size: 22px;
+            color: #161616;
+        }
+        
+        QPushButton:hover {
+            background-color: #2d6678;
+        }
+    """)
+
+    main_window.ui.add_mode.setStyleSheet("""
+        QPushButton {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #2d6678;
+            font-size: 22px;
+            color: #161616;
+        }
+        
+        QPushButton:hover {
+            background-color: #2d6678;
+        }
+    """)
+
+    main_window.ui.start_study.setStyleSheet("""
         QPushButton {
             background-color: #f9f9f9;
             border-radius: 10px;
@@ -76,15 +207,51 @@ def setup_tab_widget(main_window):
             background-color: #2d6577;
             border-radius: 10px;
         }
-    ''')    
+    ''') 
+
+    main_window.ui.lcdNumber_x.setStyleSheet("""
+        QLCDNumber {
+            border: 1px solid #455a64;
+            border-radius: 5px;
+        }
+    """)
+    main_window.ui.lcdNumber_y.setStyleSheet("""
+        QLCDNumber {
+            border: 1px solid #455a64;
+            border-radius: 5px;
+        }
+    """)
+    main_window.ui.lcdNumber_z.setStyleSheet("""
+        QLCDNumber {
+            border: 1px solid #455a64;
+            border-radius: 5px;
+        }
+    """)
+
+    main_window.ui.textBrowser.setStyleSheet("""
+        QTextBrowser {
+            border: 1px solid #455a64;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            color: #333333;
+            font-size: 14px;
+        }
+        
+        QTextBrowser::hover {
+            background-color: #f7f7f7;
+        }
+    """)
 
     
 def add_available_ports(main_window):
     ports = serial.tools.list_ports.comports()
     port_list = [port.device for port in ports]
-
-    for port in port_list:
-        main_window.ui.COM.addItem(port)
+    if port_list:
+        for port in port_list:
+            main_window.ui.COM.addItem(port)
+            main_window.pritn_to_console(port_list + "[OK]")
+        else:
+            main_window.pritn_to_console('COM devices not found [ERR]')
 
 
 class StudyWidgetTab():
@@ -96,6 +263,21 @@ class StudyWidgetTab():
         
         self.flag_stopped = True
 
+        my_style = {
+            "figure.facecolor": "#f9f9f9",
+            "axes.facecolor": "#FFFFFF",
+            "axes.edgecolor": "#455a64",
+            "axes.labelcolor": "#333333",
+            "axes.linewidth": 1.0,
+            "xtick.color": "#455a64",
+            "ytick.color": "#455a64",
+            "grid.color": "#DDDDDD",
+            "grid.linestyle": "--",
+            "grid.linewidth": 0.5,
+        }
+
+        style.use(my_style)
+
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
         self.axes = self.figure.subplots(3, 1)
@@ -104,6 +286,10 @@ class StudyWidgetTab():
         self.axes[1].set_ylabel('Y')
         self.axes[2].set_ylabel('Z')
         self.axes[2].set_xlabel('Time') 
+
+        
+
+        
 
         self.canvas.draw()
 
@@ -126,13 +312,18 @@ class StudyWidgetTab():
 
 
     def update_graph(self):
-        # Генерация случайных данных для осей x, y, z (замените этот код на ваш код получения данных)
+        # Генерация случайных данных для осей x, y, z
         x = np.random.randint(0, 100)
         y = np.random.randint(0, 100)
         z = np.random.randint(0, 100)
 
         # Добавление новых данных в списки
         x, y, z = self.calculate_rotation_angles()
+
+        # Изменение значений LCD
+        self.main_window.ui.lcdNumber_x.display(x)
+        self.main_window.ui.lcdNumber_y.display(y)
+        self.main_window.ui.lcdNumber_z.display(z)
 
         self.data_x.append(x)
         self.data_y.append(y)

@@ -1,0 +1,1 @@
+pyuic5 dialog_add_study.ui -o ui_dialog_wnd.py

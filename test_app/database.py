@@ -1,59 +1,60 @@
 import psycopg2
 
 
-class DatabaseConnection():
+class DatabaseConnection:
     def __init__(self):
         self.conn = psycopg2.connect(
-            host="localhost",  # Адрес сервера базы данных
-            port="7777",  # Порт сервера базы данных
-            database="avax_db",  # Имя базы данных
-            user="ivan",  # Имя пользователя
-            password="ivan"  # Пароль пользователя
+            host="localhost",
+            port="7777",
+            database="avax_db",
+            user="ivan",
+            password="ivan"
         )
-
         self.create_table()
-
 
     def create_table(self):
         cursor = self.conn.cursor()
 
         create_table_query = '''
-            CREATE TABLE IF NOT EXISTS data_table (
+            CREATE TABLE IF NOT EXISTS study_table (
                 id SERIAL PRIMARY KEY,
-                value TEXT
+                title TEXT,
+                position TEXT,
+                created_at TEXT,
+                description TEXT
             )
         '''
+
         cursor.execute(create_table_query)
         self.conn.commit()
         cursor.close()
 
-    def insert_data(self, value):
+    def fetch_all_data(self):
         cursor = self.conn.cursor()
 
-        insert_query = '''
-            INSERT INTO data_table (value)
-            VALUES (%s)
-        '''
-        data = (value,)
-        cursor.execute(insert_query, data)
-        self.conn.commit()
-        cursor.close()
-
-    def fetch_data(self):
-        cursor = self.conn.cursor()
-
-        select_query = "SELECT * FROM data_table"
+        select_query = "SELECT * FROM study_table"
         cursor.execute(select_query)
 
         rows = cursor.fetchall()
         for row in rows:
-            id_value = row[0]  # Значение поля id
-            value = row[1]  # Значение поля value
-            print(f"ID: {id_value}, Value: {value}")
+            print(row)
 
+        cursor.close()
+
+        return list(rows)
+
+    def insert_data(self, title, position, created_at, description):
+        cursor = self.conn.cursor()
+
+        insert_query = '''
+            INSERT INTO study_table (title, position, created_at, description)
+            VALUES (%s, %s, %s, %s)
+        '''
+
+        data = (title, position, created_at, description)
+        cursor.execute(insert_query, data)
+        self.conn.commit()
         cursor.close()
 
     def close_connection(self):
         self.conn.close()
-
-

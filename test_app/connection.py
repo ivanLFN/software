@@ -51,8 +51,12 @@ class ConnectionAruino():
         try:
             ser = serial.Serial(self.com)
             ser.close()
+            
+            self.main_window.pritn_to_console(f'The connection to the {self.com} port has been established [OK]')
             return f"Подключение к порту {self.com} установлено."
+            
         except serial.SerialException:
+            self.main_window.pritn_to_console(f'Failed to connect to port {self.com} : {serial.SerialException} [ERR]')
             return f"Не удалось подключиться к порту {self.com}."
         
     def rotate_axle(self, axle, step_count, dir):
@@ -95,6 +99,8 @@ class ConnectionAruino():
         accel_x = random.uniform(0.2, 0.23)
         accel_y = random.uniform(-0.08, -0.13)
         accel_z = random.uniform(9.75, 9.85)
+
+        # self.main_window.pritn_to_console(f'Data received: ({round(gyro_x, 3)}, {round(gyro_y, 3)}, {round(gyro_z, 3)}, {round(accel_x, 3)}, {round(accel_y, 3)}, {round(accel_z, 3)}) [OK]')
 
         return (gyro_x, gyro_y, gyro_z, accel_x, accel_y, accel_z)
 
